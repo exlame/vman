@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="electron-tabs.css">
+</head>
+<body style="margin:0">
+
+<div class="etabs-tabgroup">
+    <div class="etabs-tabs"></div>
+    <div class="etabs-buttons"></div>
+</div>
+<div class="etabs-views"></div>
+
+
+<script>
+window.$ = window.jQuery = require('jquery');
+    const TabGroup = require('electron-tabs');
+    //const TabGroup = require("../index");
+	
+
+
+    let tabGroup = new TabGroup({
+       newTab : {
+		title: "Console",
+        src: "http://vvv.test:3000",
+        visible: true,
+        active: true,
+		closable : false
+		}
+    });/*
+	tabGroup.addTab({
+		title: 'text',
+		src: 'settings.html',
+		visible: true,
+		active: true,
+		closable : true,
+		ready: function(tab){
+			var webview = tab.webview;
+			webview.addEventListener('dom-ready', () => {
+				webview.openDevTools()
+			  })
+		}
+	});*/
+	
+	
+	const ipcRenderer = require('electron').ipcRenderer; 
+	
+	
+	ipcRenderer.on('open' , function(event , data){
+	console.log(data.url);
+		tabGroup.addTab({
+			title: data.title,
+			src: data.url,
+			visible: true,
+			active: true,
+			closable : true,
+			icon: data.icon
+		});
+	});
+</script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+</body>
+</html>

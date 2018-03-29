@@ -1,0 +1,21 @@
+{
+  "name": "vmon",
+  "version": "0.9.1",
+  "description": "Simple tabs for Electron applications",
+  "main": "app.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . --overwrite --all --out=./dist"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^1.6.11",
+    "electron-winstaller": "^2.6.4"
+  },
+  "dependencies": {
+    "electron-default-menu": "^1.0.1",
+    "electron-json-storage": "^4.0.2",
+    "electron-tabs": "^0.9.1",
+    "jquery": "^3.3.1"
+  }
+}
