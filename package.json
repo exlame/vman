@@ -13,9 +13,11 @@
     "electron-winstaller": "^2.6.4"
   },
   "dependencies": {
+    "ansi-to-html": "^0.6.4",
     "electron-default-menu": "^1.0.1",
     "electron-json-storage": "^4.0.2",
     "electron-tabs": "^0.9.1",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "node-vagrant": "^1.2.2"
   }
 }

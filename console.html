@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Console</title>
+  <style>
+    body{
+      background:#000;
+      color:#fff;
+      font-family: "Courrier New";
+    }
+    </style>
+</head>
+<body style="margin:0">
+
+
+
+<script>
+window.$ = window.jQuery = require('jquery');
+	
+	const ipcRenderer = require('electron').ipcRenderer; 
+	var Convert = require('ansi-to-html');
+  var convert = new Convert({newline: true});
+	ipcRenderer.on('log' , function(event , data){
+    console.log(data);
+    var message = convert.toHtml(data.message);
+		$('body').append(message);
+    $("html, body").stop().scrollTop($(document).height());
+	});
+</script>
+</body>
+</html>

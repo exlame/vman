@@ -6,25 +6,31 @@ app.setName('VMon');
 const defaultMenu = require('electron-default-menu');
 const { Menu, shell } = electron;
 const storage = require('electron-json-storage');
+const process = require('process');
+const { spawn } = require('child_process');
 
 
 
 app.on('ready', function () {
-	
-	
-
 	storage.set('vagrant', { path: 'C:/Users/douelle/Vms/vvv' }, function(error) {
 	  if (error) throw error;
 	});
 	
 
-    const mainWindow = new electron.BrowserWindow();
+    const mainWindow = new electron.BrowserWindow({
+      show: false
+    });
     mainWindow.loadURL('file://' + __dirname + '/electron-tabs.html');
     mainWindow.on('ready-to-show', function () {
-        mainWindow.show();
-        mainWindow.focus();
+        mainWindow.maximize();
+        //mainWindow.show();
+       // mainWindow.focus();
     });
+    
+    
 	
+  
+
 	const menu = defaultMenu(app, shell);
 	
 	
@@ -33,11 +39,11 @@ app.on('ready', function () {
 	}
 	
 	
-	var submenu = [];
+	var submenuVVV = [];
 	
 	function tab_register(title, url, icon){
 		// Add custom menu 
-	  submenu.push({
+	  submenuVVV.push({
 		label: title,
 		click: (item, focusedWindow) => {
 		  tab_open(title,url, icon);
@@ -50,7 +56,7 @@ app.on('ready', function () {
 	tab_register('PHP Status','http://vvv.test/php-status?html&full','fas fa-thermometer-three-quarters');
 	
 	
-	submenu.push({type: 'separator'});
+	submenuVVV.push({type: 'separator'});
 	
 	function open_vagrant_file(file){
 		function getCommandLine() {
@@ -73,11 +79,15 @@ app.on('ready', function () {
     
 	
 	var settings;
-	submenu.push({
+  
+      
+	submenuVVV.push({
 		label: 'Vagranfile',
 		click: (item, focusedWindow) => {
 			//open_vagrant_file('Vagranfile');
-			settings = new BrowserWindow();
+      settings = new BrowserWindow(new electron.BrowserWindow({
+        show : false
+      }));
 			settings.loadURL('file://' + __dirname + '/settings.html');
 			settings.on('ready-to-show', function () {
 				settings.show();
@@ -85,7 +95,7 @@ app.on('ready', function () {
 			});
 		}
 	  });
-	submenu.push({
+	submenuVVV.push({
 		label: 'vvv-custom',
 		click: (item, focusedWindow) => {
 			open_vagrant_file('vvv-custom.yml');
@@ -96,10 +106,73 @@ app.on('ready', function () {
 	
 	menu.push({
 		label: 'VVV',
-		submenu: submenu
-	  })
+		submenu: submenuVVV
+	  });
 	  
 	
+  var consoleWindow; 
+  function vagrant_run(command){
+    consoleWindow = new electron.BrowserWindow({
+      show : false,
+      closable : false
+    });
+    consoleWindow.loadURL('file://' + __dirname + '/console.html');
+    consoleWindow.on('ready-to-show', function () {
+        consoleWindow.show();
+        consoleWindow.focus();
+    });
+    
+    const vagrant = spawn('vagrant',command,{
+      cwd : 'C:/Users/douelle/Vms/vvv',
+      env: process.env
+    });
+
+    vagrant.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`);
+      consoleWindow.send('log', {message: `${data}`});
+    });
+
+    vagrant.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`);
+      consoleWindow.send('log', {message: `stderr: ${data}`});
+    });
+
+    vagrant.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+      consoleWindow.send('log', {message: `child process exited with code ${code}`});
+      consoleWindow.setClosable(true);
+    });
+  }
+  
+  submenuVagrant = [];
+  submenuVagrant.push({
+		label: 'Up',
+		click: (item, focusedWindow) => {
+			vagrant_run(['up']);
+		}
+	});
+  submenuVagrant.push({
+		label: 'Reload',
+		click: (item, focusedWindow) => {
+			vagrant_run(['reload']);
+		}
+	});
+  submenuVagrant.push({
+		label: 'Reload --provison',
+		click: (item, focusedWindow) => {
+			vagrant_run(['reload', '--provision']);
+		}
+	});
+   submenuVagrant.push({
+		label: 'Status',
+		click: (item, focusedWindow) => {
+			vagrant_run(['status']);
+		}
+	});
+  menu.push({
+		label: 'Vagrant',
+		submenu: submenuVagrant
+	  });
 
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 });
