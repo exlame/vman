@@ -104,15 +104,7 @@ app.on('ready', function () {
 	submenuVVV.push({
 		label: 'Vagranfile',
 		click: (item, focusedWindow) => {
-			//open_vagrant_file('Vagranfile');
-      settingsWindow = new BrowserWindow(new electron.BrowserWindow({
-        show : false
-      }));
-			settingsWindow.loadURL('file://' + __dirname + '/settings.html');
-			settingsWindow.on('ready-to-show', function () {
-				settingsWindow.show();
-				settingsWindow.focus();
-			});
+			open_vagrant_file('Vagrantfile');
 		}
 	  });
 	submenuVVV.push({
