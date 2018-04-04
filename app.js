@@ -26,7 +26,7 @@ app.on('ready', function () {
   var settingsWindow;
   var consoleWindow; 
   
-  mainWindow.loadURL('file://' + __dirname + '/electron-tabs.html');
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow.on('ready-to-show', function () {
       mainWindow.maximize();
       //mainWindow.show();
