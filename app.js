@@ -17,29 +17,36 @@ app.on('ready', function () {
 	});
 	
 
-    const mainWindow = new electron.BrowserWindow({
-      show: false
-    });
-    mainWindow.loadURL('file://' + __dirname + '/electron-tabs.html');
-    mainWindow.on('ready-to-show', function () {
-        mainWindow.maximize();
-        //mainWindow.show();
-       // mainWindow.focus();
-    });
-    
-    
-	
+  /********************************
+   * WINDOW
+   *******************************/
+  const mainWindow = new electron.BrowserWindow({
+    show: false
+  });
+  var settingsWindow;
+  var consoleWindow; 
   
-
+  mainWindow.loadURL('file://' + __dirname + '/electron-tabs.html');
+  mainWindow.on('ready-to-show', function () {
+      mainWindow.maximize();
+      //mainWindow.show();
+     // mainWindow.focus();
+  });
+    
+    
+	/********************************
+   * MENU
+   *******************************/
 	const menu = defaultMenu(app, shell);
-	
-	
+	var submenuVagrant = [];
+	var submenuVVV = [];
+  
 	function tab_open(title, url, icon){
 		mainWindow.send('open', {url: url, title: title, icon:icon});
 	}
 	
 	
-	var submenuVVV = [];
+	
 	
 	function tab_register(title, url, icon){
 		// Add custom menu 
@@ -74,24 +81,37 @@ app.on('ready', function () {
 		});
 			
 	}
-	
+  
+	function start_cmd(cmd){
+		function getCommandLine() {
+		   switch (process.platform) { 
+			  case 'darwin' : return 'open';
+			  case 'win32' : return 'start cmd.exe /K';
+			  case 'win64' : return 'start cmd.exe /K';
+			  default : return 'xdg-open';
+		   }
+		}
+		var exec = require('child_process').exec;
+		storage.get('vagrant', function(error, data) {
+		  if (error) throw error;
+		  exec(getCommandLine() + ' "cd ' + data.path+' && '+cmd+'"');
+		});
+	}
 	
     
 	
-	var settings;
-  
-      
+
 	submenuVVV.push({
 		label: 'Vagranfile',
 		click: (item, focusedWindow) => {
 			//open_vagrant_file('Vagranfile');
-      settings = new BrowserWindow(new electron.BrowserWindow({
+      settingsWindow = new BrowserWindow(new electron.BrowserWindow({
         show : false
       }));
-			settings.loadURL('file://' + __dirname + '/settings.html');
-			settings.on('ready-to-show', function () {
-				settings.show();
-				settings.focus();
+			settingsWindow.loadURL('file://' + __dirname + '/settings.html');
+			settingsWindow.on('ready-to-show', function () {
+				settingsWindow.show();
+				settingsWindow.focus();
 			});
 		}
 	  });
@@ -101,17 +121,50 @@ app.on('ready', function () {
 			open_vagrant_file('vvv-custom.yml');
 		}
 	  });
-	  
-	
 	
 	menu.push({
 		label: 'VVV',
 		submenu: submenuVVV
 	  });
-	  
-	
-  var consoleWindow; 
-  function vagrant_run(command){
+    
+  
+	submenuVagrant.push({
+		label: 'Up',
+		click: (item, focusedWindow) => {
+			vagrant_run(['up']);
+		}
+	});
+  submenuVagrant.push({
+		label: 'Reload',
+		click: (item, focusedWindow) => {
+			vagrant_run(['reload']);
+		}
+	});
+  submenuVagrant.push({
+		label: 'Reload --provison',
+		click: (item, focusedWindow) => {
+			vagrant_run(['reload', '--provision']);
+		}
+	});
+   submenuVagrant.push({
+		label: 'Status',
+		click: (item, focusedWindow) => {
+			vagrant_run(['status']);
+		}
+	});
+  menu.push({
+		label: 'Vagrant',
+		submenu: submenuVagrant
+	  });
+
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+    
+    
+	/**********************************
+  * VAGRANT FUNCTIONS
+  **********************************/
+  
+  /*function vagrant_run(command){
     consoleWindow = new electron.BrowserWindow({
       show : false,
       closable : false
@@ -142,37 +195,10 @@ app.on('ready', function () {
       consoleWindow.send('log', {message: `child process exited with code ${code}`});
       consoleWindow.setClosable(true);
     });
+  }*/
+  function vagrant_run(command){
+    start_cmd('vagrant '+command+' -f');
   }
   
-  submenuVagrant = [];
-  submenuVagrant.push({
-		label: 'Up',
-		click: (item, focusedWindow) => {
-			vagrant_run(['up']);
-		}
-	});
-  submenuVagrant.push({
-		label: 'Reload',
-		click: (item, focusedWindow) => {
-			vagrant_run(['reload']);
-		}
-	});
-  submenuVagrant.push({
-		label: 'Reload --provison',
-		click: (item, focusedWindow) => {
-			vagrant_run(['reload', '--provision']);
-		}
-	});
-   submenuVagrant.push({
-		label: 'Status',
-		click: (item, focusedWindow) => {
-			vagrant_run(['status']);
-		}
-	});
-  menu.push({
-		label: 'Vagrant',
-		submenu: submenuVagrant
-	  });
-
-	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+  
 });
