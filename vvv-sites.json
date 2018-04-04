@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "title": "Car",
+  "options": {
+    "collapsed": false
+  },
+  "properties": {
+      "sites" : {
+        "type": "object",
+        "options": {
+          "collapsed": true
+        },
+        "patternProperties":{
+        ".*":{
+          "type": "object",
+          "properties": {
+            "repo" : {
+              "title": "Repository",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "https://github.com/exlame/custom-site-template-develop.git"
+              ]
+            },
+            "hosts" : {
+              "title": "Hosts",
+              "type": "array",
+              "required": true,
+              "items" : {
+                "type": "string",
+                "title": "Host",
+              "default": "",
+
+              "examples": [
+                  "vvv.test"
+                ]
+              }
+            },
+            "nginx_upstream" : {
+              "type": "string",
+              "enum" : [
+                "php56",
+                "php70",
+                "php71"
+              ],
+            "default": "php71"
+            }
+          }
+        }
+      }
+    },
+        "utilities": {
+          "type": "object",
+          "properties" : {
+            "core" : {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+  }
+}

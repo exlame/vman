@@ -15,39 +15,11 @@
     // Set the default CSS theme and icon library globally
     JSONEditor.defaults.theme = 'foundation5';
     JSONEditor.defaults.iconlib = 'fontawesome4';
+    JSONEditor.defaults.editors.object.options.collapsed = true;
     </script>
   </head>
   <body>
-    <div class='row'>
-      <div class='medium-12 columns'>
-        <h1>CSS Integration JSON Editor Example</h1>
-      </div>
-    </div>
-    <div class='row'>
-      <div class='medium-6 columns'>
-        <p>JSON Editor supports these popular CSS frameworks:</p>
-        <ul>
-          <li>Bootstrap 2</li>
-          <li>Bootstrap 3</li>
-          <li>Foundation 3</li>
-          <li>Foundation 4</li>
-          <li>Foundation 5 (shown here)</li>
-          <li>jQuery UI</li>
-        </ul>
-      </div>
-      <div class='medium-6 columns'>
-        <p>JSON Editor supports these popular icon libraries:</p>
-        <ul>
-          <li>Bootstrap 2 Glyphicons</li>
-          <li>Bootstrap 3 Glyphicons</li>
-          <li>Foundicons 2</li>
-          <li>Foundicons 3</li>
-          <li>jQueryUI</li>
-          <li>Font Awesome 3</li>
-          <li>Font Awesome 4 (shown here)</li>
-        </ul>
-      </div>
-    </div>
+    
     <div class='row'>
       <div class='medium-12-columns'>
         <button id='submit' class='tiny'>Submit (console.log)</button>
@@ -60,44 +32,34 @@
     </div>
     
     <script>
+      const storage = require('electron-json-storage');
+      storage.getAll(function(error, data) {
+		  if (error) throw error;
       // This is the starting value for the editor
       // We will use this to seed the initial editor 
       // and to provide a "Restore to Default" button.
-      var starting_value = {
-        name: "John Smith",
-        age: 35,
-        gender: "male",
-        location: {
-          city: "San Francisco",
-          state: "California"
-        },
-        pets: [
-          {
-            name: "Spot",
-            type: "dog",
-            fixed: true
-          },
-          {
-            name: "Whiskers",
-            type: "cat",
-            fixed: false
-          }
-        ]
-      };
+      yaml = require('js-yaml');
+      fs   = require('fs');
+      var file = data.vagrant.path + '/vvv-custom.yml';
+      // Get document, or throw exception on error
+      try {
+        var doc = yaml.safeLoad(fs.readFileSync(file, 'utf8'));
+        console.log(doc);
+        var starting_value = doc;
+      } catch (e) {
+        console.log(e);
+      }
       
       // Initialize the editor
       var editor = new JSONEditor(document.getElementById('editor_holder'),{
-        // Enable fetching schemas via ajax
         ajax: true,
-        
-        // The schema for the editor
         schema: {
-          $ref: "person.json",
-          format: "grid"
+          $ref: "vvv-sites.json",
+          format: "table"
         },
-        
-        // Seed the form with a starting value
-        startval: starting_value
+        startval: starting_value,
+        disable_array_reorder: true,
+        display_required_only: true
       });
       
       // Hook up the submit button to log to the console
@@ -130,6 +92,7 @@
           indicator.textContent = 'valid';
         }
       });
+    });
     </script>
   </body>
 </html>

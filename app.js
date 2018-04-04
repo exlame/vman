@@ -104,23 +104,24 @@ app.on('ready', function () {
 	submenuVVV.push({
 		label: 'Vagranfile',
 		click: (item, focusedWindow) => {
-			//open_vagrant_file('Vagranfile');
+			open_vagrant_file('Vagrantfile');
+      
+		}
+	});
+	submenuVVV.push({
+		label: 'vvv-custom',
+		click: (item, focusedWindow) => {
+			//open_vagrant_file('vvv-custom.yml');
       settingsWindow = new BrowserWindow(new electron.BrowserWindow({
         show : false
       }));
-			settingsWindow.loadURL('file://' + __dirname + '/settings.html');
+			settingsWindow.loadURL('file://' + __dirname + '/settings2.html');
 			settingsWindow.on('ready-to-show', function () {
 				settingsWindow.show();
 				settingsWindow.focus();
 			});
 		}
-	  });
-	submenuVVV.push({
-		label: 'vvv-custom',
-		click: (item, focusedWindow) => {
-			open_vagrant_file('vvv-custom.yml');
-		}
-	  });
+	});
 	
 	menu.push({
 		label: 'VVV',
