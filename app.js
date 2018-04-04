@@ -37,20 +37,23 @@ app.on('ready', function () {
 	/********************************
    * MENU
    *******************************/
-	const menu = defaultMenu(app, shell);
+	//const menu = defaultMenu(app, shell);
+  //menu.splice(2,2);
+  var menu = [];
 	var submenuVagrant = [];
-	var submenuVVV = [];
-  
+	var submenuWindows = [];
+	var submenuConfigs = [];
 	function tab_open(title, url, icon){
 		mainWindow.send('open', {url: url, title: title, icon:icon});
 	}
 	
 	
 	
-	
+	////////////////////////
+  //Windows
 	function tab_register(title, url, icon){
 		// Add custom menu 
-	  submenuVVV.push({
+	  submenuWindows.push({
 		label: title,
 		click: (item, focusedWindow) => {
 		  tab_open(title,url, icon);
@@ -61,9 +64,8 @@ app.on('ready', function () {
 	tab_register('phpMyAdmin','http://vvv.test/database-admin/','fas fa-database');
 	tab_register('MailCatcher','http://vvv.test:1080/','fas fa-envelope');
 	tab_register('PHP Status','http://vvv.test/php-status?html&full','fas fa-thermometer-three-quarters');
+	tab_register('Console','http://vvv.test:3000','fas fa-terminal');
 	
-	
-	submenuVVV.push({type: 'separator'});
 	
 	function open_vagrant_file(file){
 		function getCommandLine() {
@@ -101,25 +103,28 @@ app.on('ready', function () {
     
 	
 
-	submenuVVV.push({
+	
+	
+  ////////////////////////
+  //Configs
+  submenuConfigs.push({
 		label: 'Vagranfile',
 		click: (item, focusedWindow) => {
 			open_vagrant_file('Vagrantfile');
 		}
 	  });
-	submenuVVV.push({
+	submenuConfigs.push({
 		label: 'vvv-custom',
 		click: (item, focusedWindow) => {
 			open_vagrant_file('vvv-custom.yml');
 		}
 	  });
 	
-	menu.push({
-		label: 'VVV',
-		submenu: submenuVVV
-	  });
-    
   
+  
+  
+  ////////////////////////
+  //Vagrant
 	submenuVagrant.push({
 		label: 'Up',
 		click: (item, focusedWindow) => {
@@ -135,7 +140,7 @@ app.on('ready', function () {
   submenuVagrant.push({
 		label: 'Reload --provison',
 		click: (item, focusedWindow) => {
-			vagrant_run(['reload', '--provision']);
+			vagrant_run(['reload --provision']);
 		}
 	});
    submenuVagrant.push({
@@ -144,10 +149,37 @@ app.on('ready', function () {
 			vagrant_run(['status']);
 		}
 	});
+  
   menu.push({
 		label: 'Vagrant',
 		submenu: submenuVagrant
-	  });
+  });
+    menu.push(
+  {
+    label: 'View',
+    submenu: [
+      {role: 'reload'},
+      {role: 'forcereload'},
+      {role: 'toggledevtools'},
+      {type: 'separator'},
+      {role: 'resetzoom'},
+      {role: 'zoomin'},
+      {role: 'zoomout'},
+      {type: 'separator'},
+      {role: 'togglefullscreen'}
+    ]
+  }
+  );
+  menu.push({
+		label: 'Configs',
+		submenu: submenuConfigs
+	});
+  
+  menu.push({
+		label: 'Windows',
+		submenu: submenuWindows
+	});
+
 
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
     
@@ -189,7 +221,7 @@ app.on('ready', function () {
     });
   }*/
   function vagrant_run(command){
-    start_cmd('vagrant '+command+' -f');
+    start_cmd('vagrant '+command);
   }
   
   
