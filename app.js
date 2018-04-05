@@ -176,7 +176,7 @@ app.on('ready', function () {
 	});
   
   menu.push({
-		label: 'Windows',
+		label: 'Open',
 		submenu: submenuWindows
 	});
 
