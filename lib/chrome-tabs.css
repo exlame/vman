@@ -32,11 +32,11 @@ webview{
   bottom:0;
 }
 .chrome-tab-view{
-
+  display:none;
   opacity:0;
 }
 .chrome-tab-view.active{
-
+  display:block;
   opacity:1;
 }
 
