@@ -106,11 +106,13 @@
   height: 1.6em;
   width: 1.6em;
   background-size: 1.6em;
-  margin-top: 0.6em;
+  margin-top: 0.5em;
   z-index: 3;
   display: inline-block;
   vertical-align: top;
   pointer-events: none;
+  font-size:1.2em;
+  text-align:center;
 }
 .chrome-tabs .chrome-tab-title {
   position: relative;

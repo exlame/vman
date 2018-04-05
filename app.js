@@ -61,13 +61,30 @@ app.on('ready', function () {
 	  });
 	}
 	
+  submenuWindows.push({
+		label: 'Dashboard (Web)',
+		click: (item, focusedWindow) => {
+		  open_file('http://vvv.test');
+		}
+	});
 	tab_register('phpMyAdmin','http://vvv.test/database-admin/','fas fa-database');
 	tab_register('MailCatcher','http://vvv.test:1080/','fas fa-envelope');
 	tab_register('PHP Status','http://vvv.test/php-status?html&full','fas fa-thermometer-three-quarters');
 	tab_register('Console','http://vvv.test:3000','fas fa-terminal');
 	
 	
+    
 	function open_vagrant_file(file){
+    
+		
+		storage.get('vagrant', function(error, data) {
+		  if (error) throw error;
+      open_file(data.path+'/'+file);
+		});
+			
+	}
+  
+  function open_file(file){
 		function getCommandLine() {
 		   switch (process.platform) { 
 			  case 'darwin' : return 'open';
@@ -79,7 +96,7 @@ app.on('ready', function () {
 		var exec = require('child_process').exec;
 		storage.get('vagrant', function(error, data) {
 		  if (error) throw error;
-		  exec(getCommandLine() + ' ' + data.path+'/'+file);
+		  exec(getCommandLine() + ' ' + file);
 		});
 			
 	}
