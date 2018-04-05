@@ -2,28 +2,90 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="lib/chrome-tabs.css">
+    <style>
+        .chrome-tabs .chrome-tab {
+          width: 243px
+        }
+
+        .chrome-tabs .chrome-tab:nth-child(1) {
+          transform: translate3d(0px, 0, 0)
+        }
+
+        .chrome-tabs .chrome-tab:nth-child(2) {
+          transform: translate3d(229px, 0, 0)
+        }
+        .chrome-tabs-views{
+          position:absolute;
+          top:42px;
+          left:0;
+          right:0;
+          bottom:0;
+        }
+        .chrome-tab-view{
+          position:absolute;
+          top:0;
+          left:0;
+          right:0;
+          bottom:0;
+        }
+        
+        webview{
+          position:absolute;
+          top:0;
+          left:0;
+          right:0;
+          bottom:0;
+        }
+        .chrome-tab-view{
+          
+          opacity:0;
+        }
+        .chrome-tab-view.active{
+          
+          opacity:1;
+        }
+        
+      </style>
 </head>
 <body style="margin:0">
+  <div class="chrome-tabs">
+    <div class="chrome-tabs-content"></div>
+    <div class="chrome-tabs-bottom-bar"></div>
+  </div>
+  <div class="chrome-tabs-views"></div>
 
-<div class="etabs-tabgroup">
-    <div class="etabs-tabs"></div>
-    <div class="etabs-buttons"></div>
-</div>
-<div class="etabs-views"></div>
-
-
+<script src="https://unpkg.com/draggabilly@2.1.1/dist/draggabilly.pkgd.min.js"></script>
 <script>
+const ChromeTabs = require('./lib/chrome-tabs');
+
+var el = document.querySelector('.chrome-tabs');
+var elViews = document.querySelector('.chrome-tabs-views');
+
+
+
+var chromeTabs = new ChromeTabs();
+
 window.$ = window.jQuery = require('jquery');
-    const TabGroup = require('electron-tabs');
+    //const TabGroup = require('electron-tabs');
+    
     //const TabGroup = require("../index");
 	
+    
 
+    chromeTabs.init(el,elViews, {
+      tabOverlapDistance: 14,
+      minWidth: 45,
+      maxWidth: 243
+    })
+    $(chromeTabs.el).on('activeTabChange', function(e){
+      console.log(e.detail);
+    });
 
-    let tabGroup = new TabGroup({
+  /* let tabGroup = new TabGroup({
       
 		
-    });/*
+    });
 	tabGroup.addTab({
 		title: 'text',
 		src: 'settings.html',
@@ -43,6 +105,7 @@ window.$ = window.jQuery = require('jquery');
 	
 	
 	ipcRenderer.on('open' , function(event , data){
+    /*
 	console.log(data.url);
 		tabGroup.addTab({
 			title: data.title,
@@ -51,9 +114,16 @@ window.$ = window.jQuery = require('jquery');
 			active: true,
 			closable : true,
 			icon: data.icon
-		});
+		});*/
+    chromeTabs.addTab({
+      title: data.title,
+      content: "test",
+      src: data.url,
+      type: "webview"
+      //favicon: 'demo/images/default-favicon.png'
+    });
 	});
 </script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+<script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" crossorigin="anonymous"></script>
 </body>
 </html>
