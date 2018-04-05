@@ -94,11 +94,7 @@ app.on('ready', function () {
 		   }
 		}
 		var exec = require('child_process').exec;
-		storage.get('vagrant', function(error, data) {
-		  if (error) throw error;
 		  exec(getCommandLine() + ' ' + file);
-		});
-			
 	}
   
 	function start_cmd(cmd){
