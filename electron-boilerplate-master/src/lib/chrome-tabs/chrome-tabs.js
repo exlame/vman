@@ -1,6 +1,7 @@
+(function(){
   const isNodeContext = typeof module !== 'undefined' && typeof module.exports !== 'undefined'
   if (isNodeContext) {
-    Draggabilly = require('draggabilly')
+    const Draggabilly = require('draggabilly')
   }
 
   const tabTemplate = `
@@ -329,6 +330,4 @@
   } else {
     window.ChromeTabs = ChromeTabs
   }
-
-
-var test = new ChromeTabs ();
+})()
