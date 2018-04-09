@@ -1,9 +1,8 @@
 (function(){
   const isNodeContext = typeof module !== 'undefined' && typeof module.exports !== 'undefined'
   if (isNodeContext) {
-    const Draggabilly = require('draggabilly')
+    var Draggabilly = require('draggabilly');
   }
-
   const tabTemplate = `
     <div class="chrome-tab">
       <div class="chrome-tab-background">
