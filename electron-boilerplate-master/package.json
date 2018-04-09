@@ -1,12 +1,10 @@
 {
-  "name": "electron-boilerplate",
-  "productName": "Electron Boilerplate",
-  "description": "Starter for your Electron application",
-  "version": "0.0.0",
+  "name": "vman",
+  "productName": "VVV Manager",
+  "description": "",
+  "version": "0.1.0",
   "private": true,
-  "author": "Mr. Gumby <mr.gumby@example.com>",
-  "copyright": "© 2017, Gumby inc.",
-  "homepage": "http://example.com",
+  "author": "Danny Ouellet <danny1_ouellet@uqac.ca>",
   "main": "app/background.js",
   "build": {
     "appId": "com.example.electron-boilerplate",
