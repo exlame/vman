@@ -4,10 +4,12 @@
  * and open the template in the editor.
  */
 const { app, BrowserWindow } = require("electron");
-const storage = require('electron-json-storage');
+const Store = require('electron-store');
+const store = new Store();
+const vagrant_path = store.get('vagrant.path');
+
+
 module.exports.customMenu = function(){
-  
-  
 /********************************
    * MENU
    *******************************/
@@ -51,11 +53,7 @@ module.exports.customMenu = function(){
     
 	function open_vagrant_file(file){
     
-		
-		storage.get('vagrant', function(error, data) {
-		  if (error) throw error;
-      open_file(data.path+'/'+file);
-		});
+    open_file(vagrant_path+'/'+file);
 			
 	}
   
@@ -82,10 +80,7 @@ module.exports.customMenu = function(){
 		   }
 		}
     var exec = require('child_process').exec;
-		storage.get('vagrant', function(error, data) {
-		  if (error) throw error;
-		  exec(getCommandLine() + ' "cd ' + data.path+' '+cmd+'"');
-		});
+		exec(getCommandLine() + ' "cd ' + vagrant_path+' '+cmd+'"');
 	}
 	
     
@@ -115,32 +110,43 @@ module.exports.customMenu = function(){
   
   ////////////////////////
   //Sites
-  //const storage = require('electron-json-storage');
-  storage.getAll(function(error, data) {
-  if (error) throw error;
     var yaml = require('js-yaml');
     var fs   = require('fs');
-    var file = data.vagrant.path + '/vvv-custom.yml';
+    var file = vagrant_path + '/vvv-custom.yml';
     // Get document, or throw exception on error
     try {
       var doc = yaml.safeLoad(fs.readFileSync(file, 'utf8'));
       //console.log(doc.sites);
       Object.keys(doc.sites).forEach(function(key) {
         var val = doc.sites[key];
-        //console.log(key);
-       // console.log(val);
+        var submenuHosts = [];
+        Object.keys(val.hosts).forEach(function(host_key) {
+          submenuHosts.push({
+            label: val.hosts[host_key],
+            //submenu: 
+            click: (item, focusedWindow) => {
+              open_file('http://'+val.hosts[host_key]);
+            }
+          });
+          
+        });
+        submenuHosts.push({type: 'separator'});
+        submenuHosts.push({
+          label: vagrant_path+'/www/'+key,
+          //submenu: 
+          click: (item, focusedWindow) => {
+            open_file(vagrant_path+'/www/'+key);
+          }
+        });
         submenuSites.push({
           label: key,
-          click: (item, focusedWindow) => {
-            //vagrant_run(['reload']);
-          }
+          submenu: submenuHosts
         });
         //logic();
       });
     } catch (e) {
       console.log(e);
     }
-  });
   
   
   ////////////////////////

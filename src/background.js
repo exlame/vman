@@ -6,15 +6,22 @@
 import path from "path";
 import url from "url";
 import { app, Menu } from "electron";
-import storage from 'electron-json-storage';
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
 import { customMenu } from "./menu/custom_menu";
 import createWindow from "./helpers/window";
 
+const Store = require('electron-store');
+const store = new Store();
+
+
+
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from "env";
+
+
+
 
 const setApplicationMenu = () => {
   const menus = customMenu();
@@ -24,16 +31,6 @@ const setApplicationMenu = () => {
   //}
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
 };
-
-/**
- * TEMP TEMP TEMP TEMP TEMP
- */
-storage.set('vagrant', { path: 'C:/Users/douelle/Vms/vvv' }, function(error) {
-	  if (error) throw error;
-	});
-/**
- * /TEMP
- */
 
 
 
@@ -47,9 +44,8 @@ if (env.name !== "production") {
 /**
  * TEMP TEMP TEMP TEMP TEMP
  */
-storage.set('vagrant', { path: 'C:/Users/douelle/Vms/vvv' }, function(error) {
-	  if (error) throw error;
-	});
+
+store.set('vagrant.path', 'C:/Users/douelle/Vms/vvv');
 /**
  * /TEMP
  */
