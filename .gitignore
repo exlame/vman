@@ -1,4 +1,15 @@
 /node_modules/
 /dist/
-/test-win32-x64/
 /nbproject/
+
+.DS_Store
+Thumbs.db
+*.log
+
+/dist
+/temp
+
+# ignore everything in 'app' folder what had been generated from 'src' folder
+/app/app.js
+/app/background.js
+/app/**/*.map
