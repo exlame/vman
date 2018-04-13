@@ -5,7 +5,7 @@
 
 import path from "path";
 import url from "url";
-import { app, Menu } from "electron";
+import { app, Menu, Tray } from "electron";
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
 import { customMenu } from "./menu/custom_menu";
@@ -70,7 +70,27 @@ app.on("ready", () => {
   if (env.name === "development") {
     mainWindow.openDevTools();
   }
+  
+
+
+
 });
+
+  let appIcon = null
+  app.on('ready', () => {
+    const iconPath = path.join(__dirname, 'resources/icon.ico');
+    appIcon = new Tray(iconPath);
+    const contextMenu = Menu.buildFromTemplate([
+      {label: 'Item1', type: 'radio'},
+      {label: 'Item2', type: 'radio'}
+    ])
+
+    // Make a change to the context menu
+    contextMenu.items[1].checked = false
+
+    // Call this again for Linux because we modified the context menu
+    appIcon.setContextMenu(contextMenu)
+  })
 
 app.on("window-all-closed", () => {
   app.quit();
