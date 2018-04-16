@@ -3,22 +3,41 @@
 // It doesn't have any windows which you can see on screen, but we can open
 // window from here.
 
+// Save userData in separate folders for each environment.
+// Thanks to this you can use production and development versions of the app
+// on same machine like those are two separate apps.
+import env from "env";
+import { app, Menu, Tray } from "electron";
+if (env.name !== "production") {
+  const userDataPath = app.getPath("userData");
+  app.setPath("userData", `${userDataPath} (${env.name})`);
+}
+/**
+ * TEMP TEMP TEMP TEMP TEMP
+ */
+const Store = require('electron-store');
+const store = new Store();
+store.set('vagrant.path', 'C:/Users/douelle/Vms/vvv');
+
+/**
+ * /TEMP
+ */
+
 import path from "path";
 import url from "url";
-import { app, Menu, Tray } from "electron";
+
 import { devMenuTemplate } from "./menu/dev_menu_template";
 import { editMenuTemplate } from "./menu/edit_menu_template";
 import { customMenu } from "./menu/custom_menu";
 import createWindow from "./helpers/window";
 
-const Store = require('electron-store');
-const store = new Store();
+
 
 
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
-import env from "env";
+
 
 
 
@@ -34,21 +53,7 @@ const setApplicationMenu = () => {
 
 
 
-// Save userData in separate folders for each environment.
-// Thanks to this you can use production and development versions of the app
-// on same machine like those are two separate apps.
-if (env.name !== "production") {
-  const userDataPath = app.getPath("userData");
-  app.setPath("userData", `${userDataPath} (${env.name})`);
-}
-/**
- * TEMP TEMP TEMP TEMP TEMP
- */
 
-store.set('vagrant.path', 'C:/Users/douelle/Vms/vvv');
-/**
- * /TEMP
- */
 
 app.on("ready", () => {
   setApplicationMenu();
@@ -80,13 +85,14 @@ app.on("ready", () => {
   app.on('ready', () => {
     const iconPath = path.join(__dirname, 'resources/icon.ico');
     appIcon = new Tray(iconPath);
+    const submenuVagrant = require("./menu/custom_menu_vagrant");
+    const submenuSites = require("./menu/custom_menu_sites");
+    const submenuConfigs = require("./menu/custom_menu_config");
     const contextMenu = Menu.buildFromTemplate([
-      {label: 'Item1', type: 'radio'},
-      {label: 'Item2', type: 'radio'}
-    ])
-
-    // Make a change to the context menu
-    contextMenu.items[1].checked = false
+      submenuSites,
+      submenuVagrant,
+      submenuConfigs
+    ]);
 
     // Call this again for Linux because we modified the context menu
     appIcon.setContextMenu(contextMenu)
