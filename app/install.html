@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>VVV Manager</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <style>
+    .progress{
+      visibility:hidden;
+    }
+    .progress.active{
+      visibility: visible;
+    }
+  </style>
+</head>
+<body style="margin:0">
+  <button id="install">Install</button>
+  <div class="progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+</div>
+  <div id="console">
+  </div>
+<script>
+  const ipcRenderer = require('electron').ipcRenderer; 
+  window.$ = window.jQuery = require('jquery');
+  
+  document.getElementById("install").addEventListener('click', function(){
+    ipcRenderer.send('install');
+  });
+  ipcRenderer.on('log', function(event,message){
+    $('#console').prepend(message+'<br>');
+  });
+  ipcRenderer.on('progress', function(event,value){
+    $('.progress').addClass('active');
+    $('.progress-bar').css('width',value+'%');
+  });
+  ipcRenderer.on('error', function(event,value){
+    $('.progress-bar').addClass('bg-danger');
+    alert(value);
+  });
+</script>
+</body>
+</html>

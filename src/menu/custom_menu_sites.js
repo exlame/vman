@@ -34,6 +34,13 @@ var submenuSites = [];
             menu_helper.open_file(vagrant_path+'/www/'+key);
           }
         });
+        submenuHosts.push({
+          label: 'Console to',
+          //submenu: 
+          click: (item, focusedWindow) => {
+            menu_helper.vagrant_run(['ssh -c "cd /srv/www/'+key+'"']);
+          }
+        });
         submenuSites.push({
           label: key,
           submenu: submenuHosts

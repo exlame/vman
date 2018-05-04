@@ -1,11 +1,12 @@
 const { app, BrowserWindow } = require("electron");
-const Store = require('electron-store');
-const store = new Store();
-const vagrant_path = store.get('vagrant.path');
+
+const storage = require("../helpers/storage");
+const vagrant_path = storage.get('vagrant.path');
 
 module.exports = {
   open_vagrant_file : function (file){
     
+
     this.open_file(vagrant_path+'/'+file);
 			
 	},
@@ -33,8 +34,6 @@ module.exports = {
     var exec = require('child_process').exec;
 		exec(getCommandLine() + ' "cd ' + vagrant_path+' '+cmd+'"');
 	},
-	
-    
 	vagrant_run: function(command){
     this.start_cmd('&& vagrant '+command);
   }
