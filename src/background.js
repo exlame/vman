@@ -183,7 +183,7 @@ app.on("ready", () => {
           ]
         }, function(response){
           if(response){
-            
+            menu_helper.vagrant_run('reload --provision');
           }
         });
     });
