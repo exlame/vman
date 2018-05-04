@@ -31,10 +31,9 @@ module.exports = {
   {
 		label: 'Console',
 		click: (item, focusedWindow) => {
-			menu_helper.start_cmd('');
+		  //menu_helper.start_cmd('');
+      menu_helper.vagrant_run(['ssh']);
 		}
 	}
-  
-  
   ]
 };
