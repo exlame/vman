@@ -28,7 +28,7 @@ const menu_helper = require("./helpers/menu_actions");
 // in config/env_xxx.json file.
 
 
-
+var appIcon = null
 
 
 const setApplicationMenu = () => {
@@ -39,7 +39,7 @@ const setApplicationMenu = () => {
   //}
   Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
   
-  let appIcon = null
+  
     const iconPath = path.join(__dirname, 'resources/icon.ico');
     appIcon = new Tray(iconPath);
     const submenuVagrant = require("./menu/custom_menu_vagrant");
@@ -56,13 +56,12 @@ const setApplicationMenu = () => {
 };
 
 
-
-
 ipcMain.on('install', (event, arg) => {
   const { spawn,exec } = require('child_process');
   var progress = 0;
   
   function install_vvv(){
+    var fs = require('fs');
     event.sender.send('log','Downloading VVV');
     download('exlame/vvv', vagrant_path, function (err) {
       if(err){
@@ -70,6 +69,7 @@ ipcMain.on('install', (event, arg) => {
       } else {
         progress = 2;
         event.sender.send('progress',progress);
+        fs.createReadStream(vagrant_path+'/vvv-config.yml').pipe(fs.createWriteStream(vagrant_path+'/vvv-custom.yml')); 
         install_plugins();
       }
     });
@@ -172,7 +172,21 @@ app.on("ready", () => {
     
   } else {
     
-  
+    fs.watchFile(vagrant_path+'/vvv-custom.yml', (curr, prev) => {
+        const {dialog} = require('electron');
+        dialog.showMessageBox({
+          type : 'question',
+          message : 'vvv-custom.yml changes. vagrant reload --provision?',
+          buttons : [
+            'Cancel',
+            'Yes'
+          ]
+        }, function(response){
+          if(response){
+            
+          }
+        });
+    });
     setApplicationMenu();
 
     const mainWindow = createWindow("main", {
