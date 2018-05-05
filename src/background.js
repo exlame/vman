@@ -57,21 +57,21 @@ const setApplicationMenu = () => {
 
 
 
-
+var installing = false;
 ipcMain.on('install', (event, arg) => {
-  const { spawn,exec } = require('child_process');
+  const { spawn,exec,execSync } = require('child_process');
   var progress = 0;
   
   function install_vvv(){
     event.sender.send('log','Downloading VVV');
     download('exlame/vvv', vagrant_path, function (err) {
-      if(err){
-        event.sender.send('error', 'Error downloading VVV');
-      } else {
+      //if(err){
+        //event.sender.send('error', 'Error downloading VVV');
+      //} else {
         progress = 2;
         event.sender.send('progress',progress);
         install_plugins();
-      }
+      //}
     });
   }
   
@@ -80,28 +80,39 @@ ipcMain.on('install', (event, arg) => {
       * Plugins Vagrant
       */
      var allUp = true;
-      event.sender.send('log', 'Installing Vagrant Dependencies');
-      const exec_plugins = spawn('vagrant', ['plugin','install','vagrant-hostmanager','vagrant-hostsupdater','vagrant-triggers','vagrant-vbguest'], {cwd : vagrant_path, env: process.env });
+	  event.sender.send('log', 'Uninstalling Vagrant Dependencies');
+      execSync('vagrant plugin uninstall vagrant-triggers', {cwd : vagrant_path, env: process.env });
+      execSync('vagrant plugin uninstall vagrant-hostmanager', {cwd : vagrant_path, env: process.env });
+      execSync('vagrant plugin uninstall vagrant-hostsupdater', {cwd : vagrant_path, env: process.env });
+      execSync('vagrant plugin uninstall vagrant-vbguest', {cwd : vagrant_path, env: process.env });
 
-      exec_plugins.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-        event.sender.send('log', data);
-      });
+   
+        
+		event.sender.send('log', 'Installing Vagrant Dependencies');
 
-      exec_plugins.stderr.on('data', (data) => {
-        event.sender.send('error', data);
-        console.log(`stderr: ${data}`);
-        event.sender.send('log', 'ERR: ' + data);
-        allUp = false;
-      });
+		const exec_plugins = spawn('vagrant', ['plugin','install','vagrant-hostmanager','vagrant-hostsupdater','vagrant-triggers','vagrant-vbguest'], {cwd : vagrant_path, env: process.env });
 
-      exec_plugins.on('close', (code) => {
-        progress = 10;
-        event.sender.send('progress',progress);
-        if (allUp){
-          install_up();
-        }
-      });
+		exec_plugins.stdout.on('data', (data) => {
+		  console.log(`stdout: ${data}`);
+		  event.sender.send('log', data);
+		});
+
+		exec_plugins.stderr.on('data', (data) => {
+		  event.sender.send('error', data);
+		  console.log(`stderr: ${data}`);
+		  event.sender.send('log', 'ERR: ' + data);
+		  allUp = false;
+		});
+
+		exec_plugins.on('close', (code) => {
+		  progress = 10;
+		  event.sender.send('progress',progress);
+		  if (allUp){
+			install_up();
+		  }
+		});
+	  
+	  
     }
   
   function install_up(){
@@ -143,7 +154,10 @@ ipcMain.on('install', (event, arg) => {
    * VVV
    */
   event.sender.send('progress',progress);
-  install_vvv();
+  if(!installing){
+	  installing = true;
+		install_vvv();
+  }
 });
 
 
