@@ -62,6 +62,24 @@ ipcMain.on('install', (event, arg) => {
   const { spawn,exec,execSync } = require('child_process');
   var progress = 0;
   
+  function run_command(command,callback){
+	  const exec = spawn('vagrant', ['plugin','install','vagrant-hostmanager','vagrant-hostsupdater','vagrant-triggers','vagrant-vbguest'], {cwd : vagrant_path, env: process.env });
+
+		exec.stdout.on('data', (data) => {
+		  console.log(`stdout: ${data}`);
+		  event.sender.send('log', data);
+		});
+
+		exec.stderr.on('data', (data) => {
+		  event.sender.send('error', data);
+		  console.log(`stderr: ${data}`);
+		  event.sender.send('log', 'ERR: ' + data);
+		  //allUp = false;
+		});
+
+		exec.on('close', callback);
+  }
+  
   function install_vvv(){
     event.sender.send('log','Downloading VVV');
     download('exlame/vvv', vagrant_path, function (err) {
